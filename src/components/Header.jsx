@@ -2,30 +2,15 @@ import React from 'react';
 import { AppBar, Toolbar, List, ListItem, Link, ListItemText, Button } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Link as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import useStyles from '../styles/Header';
 // import { ReactComponent as Logo } from '../images/logo.svg';
 
 const navLink = [
   {title: 'Home', path: '/'},
   {title: 'Favorites', path: '/favotites'},
-  {title: 'Weekly planner', path: '/planner'},
+  {title: 'Planner', path: '/planner'},
   {title: 'Analyzer', path: '/analyzer'}
 ];
-
-const useStyles = makeStyles(theme => ({
-  nav: {justifyContent: 'space-between'},
-
-  navLink: {
-    color: 'white',
-    textTransform: 'uppercase'
-  },
-
-  navItem: {width: 'auto'},
-
-  navList: {display: 'flex'},
-
-  button: {margin: theme.spacing(2)}
-}));
 
 const Header = () => {
   const classes = useStyles();

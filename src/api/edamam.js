@@ -8,12 +8,13 @@ export default class Edamam {
     }
   }
 
-  static getData (cfgType, page = 0, query = '', queryType = 'q') {
+  static getData (cfgType, page = 0, query = 'meat', queryType = 'q') {
     const BASE_URL = 'https://api.edamam.com/search',
           API = `?app_id=${this.cfg[cfgType].ID}&app_key=${this.cfg[cfgType].API_KEY}`,
           queryApi = `&${queryType}=${query}`,
           options = `&from=${+page * ITEM_PAGE}&to=${ITEM_PAGE * (+page + 1)}&imageSize=REGULAR`;
 
-    return fetch(BASE_URL + API + queryApi + options);
+    return fetch(BASE_URL + API + queryApi + options)
+      .then(response => response.json());
   }
 };
