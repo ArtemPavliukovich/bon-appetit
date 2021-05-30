@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Edamam from '../api/edamam';
-import { Container, Grid } from '@material-ui/core';
-import Card from './Card';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles({
-  main: {padding: '24px'}
-});
+import { Container, Grid, CircularProgress } from '@material-ui/core';
+import { Card } from './index';
+import useStyles from '../styles/Home';
 
 const Home = () => {
   const [ recipes, setRecipes ] = useState([]);
@@ -16,33 +12,46 @@ const Home = () => {
   const prevPage = useRef(page);
   const isData = useRef(undefined);
 
-  const { main } = useStyles();
+  const { main, displayOff, position } = useStyles();
 
   useEffect(() => {
+    let isMounted = true;
+
     Edamam.getData('recipeSearch', page)
       .then(data => {
+        //console.log(data);
         const recipes = [...prevRecipes.current, ...[data.hits][0]];
         prevRecipes.current = recipes;
         prevPage.current = page;
         isData.current = data.more;
-        setRecipes(recipes);
+        if (isMounted) setRecipes(recipes);
       });
+
+    return (() => {isMounted = false});
   }, [page]);
 
-  useEffect(() => { // тут есть проблема, надо вернуть функцию чтоб удалять обработчик
-    window.addEventListener('scroll', () => {
-      const lazyHeight = document.body.offsetHeight - window.pageYOffset;
-      
-      if (isData.current && lazyHeight < document.documentElement.clientHeight + 700) {
-        setPage(prevPage.current + 1);
-      }
-    }, {passive: true});
+  const loadContent = () => {
+    const bodyHeight = document.body.offsetHeight,
+          screenHeight = document.documentElement.clientHeight,
+          scrollHeight = window.pageYOffset;
+    
+    if (isData.current && bodyHeight - screenHeight - scrollHeight < 700) {
+      setPage(prevPage.current + 1);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', loadContent, {passive: true});
+    return () => {
+      window.removeEventListener('scroll', loadContent, {passive: true});
+    };
   }, []);
   
   return (
-    <Container component='main' className={ main }>
-      <Grid container spacing={ 3 }>
-        {!recipes.length ? null : recipes.map((el, i) => 
+    <Container component='main' className={ `${main} ${recipes.length ? '' : position}` }>
+      <CircularProgress className={ recipes.length ? displayOff : '' } size={ 50 } />
+      <Grid container spacing={ 3 } className={ !recipes.length ? displayOff : '' }>
+        {recipes.map((el, i) =>
           <Card el={ el } key={ i + el.recipe.label } />
         )}
       </Grid>

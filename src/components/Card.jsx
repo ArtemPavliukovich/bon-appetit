@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import useStyles from '../styles/Card';
 import { Grid, Card, CardMedia, CardActionArea, Typography, Chip, CardContent, IconButton } from '@material-ui/core';
 import { MenuBookTwoTone, MoodBadOutlined, Favorite, PostAdd } from '@material-ui/icons';
-import CardDialog from './CardDialog';
+import { CardDialog } from './index';
 import { LoremIpsum } from 'lorem-ipsum';
+import { GET_ID } from '../reducers/actions-const';
 
 const lorem = new LoremIpsum({
   sentencesPerParagraph: {
@@ -16,15 +19,27 @@ const lorem = new LoremIpsum({
   }
 });
 
+const regexp = new RegExp('^.*recipe_(.+)$', 'i');
+
 const MyCard = ({ el }) => {
   const [ open, setOpen ] = useState(false);
   const classes = useStyles();
+  const dispatch = useDispatch();
   
   //console.log(el.recipe)
   return (
-    <Grid item xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 } data-id={ el.recipe.uri }>
+    <Grid item xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 }>
       <Card raised className={ classes.card }>
-        <CardActionArea>
+        <CardActionArea 
+          component={ Link } 
+          onClick={() => {
+            dispatch({
+              type: GET_ID,
+              id: el.recipe.uri
+            });
+          }}
+          to={ `/recipes/${el.recipe.uri.replace(regexp, '$1')}` }
+        >
           <CardMedia
             className={ classes.media }
             image={ el.recipe.image }
@@ -33,7 +48,7 @@ const MyCard = ({ el }) => {
           <Typography variant='h6' align='center' className={ classes.title }>
             { el.recipe.label }
           </Typography>
-          <Typography className={ classes.lorem }>
+          <Typography className={ classes.lorem } paragraph>
             { lorem.generateParagraphs(2) }
           </Typography>
         </CardActionArea>

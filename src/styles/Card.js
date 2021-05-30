@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
 
   card: {
-    padding: '16px',
+    padding: '12px',
     height: '100%',
     backgroundColor: grey[300],
     display: 'flex',
