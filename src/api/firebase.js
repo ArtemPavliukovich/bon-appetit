@@ -2,7 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 
 export default class Firebase {
-  static #config = {
+  static config = {
     apiKey: 'AIzaSyDMqja5swln1Yo4E2EAICwq3ZVCREQI6aU',
     authDomain: 'bon-appetit-69114.firebaseapp.com',
     projectId: 'bon-appetit-69114',
@@ -11,7 +11,7 @@ export default class Firebase {
     appId: '1:69428444391:web:29506c3d6977766697b642'
   }
 
-  static #error (err) {
+  static error (err) {
     switch (err) {
       case 'auth/email-already-in-use':
         return 'Такой адрес электронной почты уже используется';
@@ -35,10 +35,11 @@ export default class Firebase {
   }
 
   static init () {
-    firebase.initializeApp(this.#config);
+    firebase.initializeApp(this.config);
   }
 
-  static register (email, password, name) {
+  static register (user) {
+    const { email, password, name } = user;
     return new Promise((resolve, reject) => {
       firebase.auth().createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
@@ -46,15 +47,16 @@ export default class Firebase {
             .then(() => resolve(userCredential.user))
             .catch(() => reject('Произошла ошибка'));
         })
-        .catch(err => reject(this.#error(err.code)));
+        .catch(err => reject(this.error(err.code)));
     });
   }
 
-  static signIn (email, password) {
+  static signIn (user) {
+    const { email, password } = user;
     return new Promise((resolve, reject) => {
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then(userCredential => resolve(userCredential.user))
-        .catch(err => reject(this.#error(err.code)));
+        .catch(err => reject(this.error(err.code)));
     });
   }
 
