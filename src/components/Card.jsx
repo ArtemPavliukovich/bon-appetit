@@ -25,14 +25,16 @@ const MyCard = ({ el }) => {
   const [ open, setOpen ] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
-  
+
   //console.log(el.recipe)
   return (
     <Grid item xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 }>
       <Card raised className={ classes.card }>
-        <CardActionArea 
-          component={ Link } 
+        <CardActionArea
+          component={ Link }
           onClick={() => {
+            // убрать либо заменить на модалку с пзапросом на редирект и редиректнуть
+            // action type
             dispatch({
               type: GET_ID,
               id: el.recipe.uri
@@ -71,8 +73,8 @@ const MyCard = ({ el }) => {
             />
           </Grid>
           <CardDialog
-            open={ open } 
-            setOpen= { setOpen } 
+            open={ open }
+            setOpen= { setOpen }
             ingredients={ el.recipe.ingredients }
           />
           <IconButton aria-label='add to favorites' className={ classes.favoriteIcon }>

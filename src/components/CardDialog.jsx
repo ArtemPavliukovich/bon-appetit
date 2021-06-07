@@ -4,15 +4,16 @@ import { Close } from '@material-ui/icons';
 
 const CardDialog = ({ open, setOpen, ingredients }) => {
   return (
-    <Dialog 
-      open={ open } 
-      onClose={ () => setOpen(false) } 
+    <Dialog
+      open={ open }
+      onClose={ () => setOpen(false) }
       aria-labelledby='dialog-title'
       fullWidth
     >
       <DialogTitle>
         <Grid container justify='space-between' alignItems='center'>
           <Typography variant='h6'>
+          {/* object messages*/}
             Ingredients List
           </Typography>
           <IconButton aria-label='close' onClick={ () => setOpen(false) }>

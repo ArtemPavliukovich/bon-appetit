@@ -17,6 +17,7 @@ const App = () => {
 
   return (
     <Container disableGutters={ true } maxWidth={ false } className={ container }>
+      {/*спрятать хэдер на логин пейдж*/}
       <Header />
       <Switch>
         <Route exact path='/' render={ () => <Home /> } />

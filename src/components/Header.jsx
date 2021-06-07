@@ -23,17 +23,19 @@ const Header = () => {
       setUrl(window.location.pathname);
     });
   }, []);
-  
+
   return (
-    <Fragment>
+      //Fragment
+    <>
       <AppBar position={ url === '/' ? 'fixed' : 'static'}>
-        <Container disableGutters={ true }> 
+        <Container disableGutters={ true }>
+          {/*Приватность? */}
           <Toolbar
-            component='nav' 
+            component='nav'
             className= { `${classes.nav} ${url === '/login' ? classes.flexEnd : ''}` }
           >
             <IconButton
-              color='inherit' 
+              color='inherit'
               aria-label='menu'
               className={ isMenu && url !== '/login' ? '' : classes.display }
               onClick={ () => setMenu(!menu) }
@@ -43,14 +45,14 @@ const Header = () => {
             {/* <Slide>
               {'hgghg'}
             </Slide> */}
-            <List 
-              className={ `${classes.navList} ${url === '/login' || isMenu ? classes.display : ''}` } 
+            <List
+              className={ `${classes.navList} ${url === '/login' || isMenu ? classes.display : ''}` }
               aria-labelledby='main navigation'
             >
               {navLink.map(({ title, path }) => {
                 return (
                   <ListItem className={ classes.navItem } key={ title }>
-                    <Link 
+                    <Link
                       component={ url === path ? 'a' : RouterLink }
                       href={ url === path ? '#' : null }
                       to={ path }
@@ -65,11 +67,11 @@ const Header = () => {
                 );
               })}
             </List>
-            <Button 
-              component={ url === '/login' ? 'button' : RouterLink } 
-              to='/login' 
-              startIcon={ <LockOutlined /> } 
-              variant='outlined' 
+            <Button
+              component={ url === '/login' ? 'button' : RouterLink }
+              to='/login'
+              startIcon={ <LockOutlined /> }
+              variant='outlined'
               className={ `${classes.button} ${url === '/login' ? classes.buttonActive : ''}` }
               onClick={ () => setUrl('/login') }
             >
@@ -79,7 +81,7 @@ const Header = () => {
         </Container>
       </AppBar>
       { url === '/' ? <div className={ classes.offset } /> : null }
-    </Fragment>
+    </>
   );
 };
 
