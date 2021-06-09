@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import Edamam from '../api/edamam';
 
-const Recipe = () => { // дорабатывать
-  const [ recipe, setRecipe ] = useState(null);
-  const id = useSelector(state => state.recipe);
+const getID = () => document.location.href.replace(/^.+recipes\/(.+)$/, '$1');
+
+const Recipe = () => {
+  //const [ recipe, setRecipe ] = useState(null);
+  const id = getID();
   
   useEffect(() => {
-    Edamam.getData('recipeSearch', null, id, 'r')
+    Edamam.getData({
+      type: 'r',
+      page: null,
+      text: id,
+      apiType: 'recipeSearch'
+    })
       .then(data => console.log(data));
   }, []);
 

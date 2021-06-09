@@ -1,20 +1,23 @@
-const ITEM_PAGE = 12;
+const NUM_ITEMS_PAGE = 12;
+const QUERY_RECIPE = 'http%3A%2F%2Fwww.edamam.com%2Fontologies%2Fedamam.owl%23recipe_';
+const BASE_URL = 'https://api.edamam.com/search';
 
 export default class Edamam {
-  static cfg = {
+  static config = {
     recipeSearch: {
-      ID: '7d9eaa37',
-      API_KEY: '3f3205e03268bdeebff3d78c3f0edf43'
+      id: '7d9eaa37',
+      apiKey: '3f3205e03268bdeebff3d78c3f0edf43'
     }
   }
 
-  static getData (cfgType, page, query = 'meat', queryType = 'q') {
-    const BASE_URL = 'https://api.edamam.com/search',
-          API = `?app_id=${this.cfg[cfgType].ID}&app_key=${this.cfg[cfgType].API_KEY}`,
-          queryApi = `&${queryType}=${query}`,
-          options = page !== null ? `&from=${+page * ITEM_PAGE}&to=${ITEM_PAGE * (+page + 1)}&imageSize=REGULAR` : '';
+  static getData ({ text, type, page, apiType }) {
+    const { id, apiKey } = this.config[apiType];
+
+    const api = `?app_id=${id}&app_key=${apiKey}`,
+          options = `&${type}=${type === 'q' ? text : QUERY_RECIPE + text}&imageSize=REGULAR`,
+          pages = page !== null ? `&from=${+page * NUM_ITEMS_PAGE}&to=${NUM_ITEMS_PAGE * (+page + 1)}` : '';
     
-    return fetch(BASE_URL + API + queryApi + options)
+    return fetch(BASE_URL + api + options + pages)
       .then(response => response.json());
   }
 };

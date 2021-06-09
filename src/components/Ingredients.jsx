@@ -1,8 +1,9 @@
 import React from 'react';
 import { Grid, Typography, Dialog, DialogTitle, DialogContent, IconButton } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
+import messages from '../constants/messages';
 
-const CardDialog = ({ open, setOpen, ingredients }) => {
+const Ingredients = ({ open, setOpen, ingredients }) => {
   return (
     <Dialog 
       open={ open } 
@@ -13,7 +14,7 @@ const CardDialog = ({ open, setOpen, ingredients }) => {
       <DialogTitle>
         <Grid container justify='space-between' alignItems='center'>
           <Typography variant='h6'>
-            Ingredients List
+            {messages.card.dialogTitle}
           </Typography>
           <IconButton aria-label='close' onClick={ () => setOpen(false) }>
             <Close />
@@ -33,4 +34,4 @@ const CardDialog = ({ open, setOpen, ingredients }) => {
   );
 }
 
-export default CardDialog;
+export default Ingredients;

@@ -17,7 +17,12 @@ const Home = () => {
   useEffect(() => {
     let isMounted = true;
 
-    Edamam.getData('recipeSearch', page)
+    Edamam.getData({
+     apiType: 'recipeSearch', 
+     page: page,
+     text: 'meat',
+     type: 'q'
+    })
       .then(data => {
         //console.log(data);
         const recipes = [...prevRecipes.current, ...[data.hits][0]];

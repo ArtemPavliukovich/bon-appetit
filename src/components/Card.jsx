@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import useStyles from '../styles/Card';
 import { Grid, Card, CardMedia, CardActionArea, Typography, Chip, CardContent, IconButton } from '@material-ui/core';
 import { MenuBookTwoTone, MoodBadOutlined, Favorite, PostAdd } from '@material-ui/icons';
-import { CardDialog } from './index';
+import { Ingredients, PlannerFields } from './index';
 import { LoremIpsum } from 'lorem-ipsum';
-import { GET_ID } from '../reducers/actions-const';
 
 const lorem = new LoremIpsum({
   sentencesPerParagraph: {
@@ -23,21 +21,14 @@ const regexp = new RegExp('^.*recipe_(.+)$', 'i');
 
 const MyCard = ({ el }) => {
   const [ open, setOpen ] = useState(false);
+  const [ openPlannerFields, setPlannerFields ] = useState(false);
   const classes = useStyles();
-  const dispatch = useDispatch();
   
-  //console.log(el.recipe)
   return (
     <Grid item xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 }>
       <Card raised className={ classes.card }>
         <CardActionArea 
           component={ Link } 
-          onClick={() => {
-            dispatch({
-              type: GET_ID,
-              id: el.recipe.uri
-            });
-          }}
           to={ `/recipes/${el.recipe.uri.replace(regexp, '$1')}` }
         >
           <CardMedia
@@ -70,7 +61,7 @@ const MyCard = ({ el }) => {
               disabled
             />
           </Grid>
-          <CardDialog
+          <Ingredients
             open={ open } 
             setOpen= { setOpen } 
             ingredients={ el.recipe.ingredients }
@@ -78,9 +69,19 @@ const MyCard = ({ el }) => {
           <IconButton aria-label='add to favorites' className={ classes.favoriteIcon }>
             <Favorite />
           </IconButton>
-          <IconButton aria-label='add to planner' color='primary'>
+          <IconButton 
+            aria-label='add to planner' 
+            color='primary'
+            onClick={ () => setPlannerFields(true) }
+          >
             <PostAdd />
           </IconButton>
+          <PlannerFields
+            openPlannerFields={ openPlannerFields } 
+            setPlannerFields= { setPlannerFields }
+            title={ el.recipe.label }
+            url={ el.recipe.url }
+          />
         </CardContent>
       </Card>
     </Grid>

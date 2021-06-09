@@ -4,6 +4,7 @@ import { LockOutlined, Menu } from '@material-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 import useStyles from '../styles/Header';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import messages from '../constants/messages';
 // import { ReactComponent as Logo } from '../images/logo.svg';
 
 const navLink = [
@@ -73,7 +74,7 @@ const Header = () => {
               className={ `${classes.button} ${url === '/login' ? classes.buttonActive : ''}` }
               onClick={ () => setUrl('/login') }
             >
-              sign in
+              {messages.header.button}
             </Button>
           </Toolbar>
         </Container>

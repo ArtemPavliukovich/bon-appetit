@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import rootReducer from './reducers/reducers';
+import rootReducer from './store/reducers';
 import { App } from './components/index';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import "@fontsource/roboto";
@@ -12,6 +12,10 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 const store = createStore(rootReducer);
+
+store.subscribe(() => {
+  localStorage.setItem('planner', JSON.stringify(store.getState().planner));
+})
 
 ReactDOM.render(
   <React.StrictMode>
