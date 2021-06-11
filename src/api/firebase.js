@@ -14,23 +14,23 @@ export default class Firebase {
   static error (err) {
     switch (err) {
       case 'auth/email-already-in-use':
-        return 'Такой адрес электронной почты уже используется';
+        return 'This email address is already in use';
       case 'auth/invalid-email':
-        return 'Введите правильный адрес почты';
+        return 'Enter the correct email address';
       case 'auth/operation-not-allowed':
-        return 'Операция не доступна, обратитесь в службу поддерки';
+        return 'The operation is not available, please contact support';
       case 'auth/weak-password':
-        return 'Придумайте более сложный пароль';
+        return 'Come up with a more complex password';
       case 'auth/invalid-email':
-        return 'Введенного адреса электронной почты не существует';
+        return 'The entered email address does not exist';
       case 'auth/user-disabled':
-        return 'Вы были отключены от системы, авторизируйтесь заново';
+        return 'You were disconnected from the system, log in again';
       case 'auth/user-not-found':
-        return 'Не правильно введен адрес электронной почты';
+        return 'Incorrect email address entered';
       case 'auth/wrong-password':
-        return 'Не правильно введен пароль';
+        return 'Wrong password entered';
       default:
-        return 'Ошибка, повторите запрос';
+        return 'Error, repeat the request';
     }
   }
 
@@ -38,29 +38,19 @@ export default class Firebase {
     firebase.initializeApp(this.config);
   }
 
-  static register (user) {
-    const { email, password, name } = user;
-    return new Promise((resolve, reject) => {
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          userCredential.user.updateProfile({displayName: name})
-            .then(() => resolve(userCredential.user))
-            .catch(() => reject('Произошла ошибка'));
-        })
-        .catch(err => reject(this.error(err.code)));
-    });
-  }
+  static autorization ({ email, password, type }) {
+    const funcAutorization = type === 'sign-in' 
+      ? firebase.auth().signInWithEmailAndPassword
+      : firebase.auth().createUserWithEmailAndPassword;
 
-  static signIn (user) {
-    const { email, password } = user;
     return new Promise((resolve, reject) => {
-      firebase.auth().signInWithEmailAndPassword(email, password)
+      funcAutorization(email, password)
         .then(userCredential => resolve(userCredential.user))
         .catch(err => reject(this.error(err.code)));
     });
   }
 
-  static checkAutorization () {
+  static isAutorization () {
     return new Promise(resolve => {
       firebase.auth().onAuthStateChanged(user => {
         return user ? resolve(true) : resolve(false);
