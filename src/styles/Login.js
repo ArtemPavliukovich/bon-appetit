@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { pink, grey } from '@material-ui/core/colors';
+import fon from '../images/fon.png';
 
 const useStyles = makeStyles((theme) => ({
   pink: {
@@ -8,7 +9,11 @@ const useStyles = makeStyles((theme) => ({
     margin: '6px auto'
   },
 
-  main: {flexGrow: 1},
+  main: {
+    flexGrow: 1,
+    background: `url(${fon}) no-repeat`,
+    backgroundSize: 'cover'
+  },
 
   margin: {margin: '24px 0'},
 

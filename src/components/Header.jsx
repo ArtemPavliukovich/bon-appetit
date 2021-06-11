@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { AppBar, Toolbar, List, ListItem, Link, ListItemText, Button, Container, IconButton, Slide } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { AppBar, Toolbar, List, ListItem, Link, ListItemText, Button, Container, IconButton } from '@material-ui/core';
 import { LockOutlined, Menu } from '@material-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 import useStyles from '../styles/Header';
@@ -8,7 +8,7 @@ import messages from '../constants/messages';
 // import { ReactComponent as Logo } from '../images/logo.svg';
 
 const navLink = [
-  {title: 'Home', path: '/'},
+  {title: 'Home', path: '/home'},
   {title: 'Favorites', path: '/favotites'},
   {title: 'Planner', path: '/planner'}
 ];
@@ -26,11 +26,11 @@ const Header = () => {
   }, []);
   
   return (
-    <Fragment>
+    <>
       <AppBar position={ url === '/' ? 'fixed' : 'static'}>
         <Container disableGutters={ true }> 
           <Toolbar
-            component='nav' 
+            component='nav'
             className= { `${classes.nav} ${url === '/login' ? classes.flexEnd : ''}` }
           >
             <IconButton
@@ -41,9 +41,6 @@ const Header = () => {
             >
               <Menu />
             </IconButton>
-            {/* <Slide>
-              {'hgghg'}
-            </Slide> */}
             <List 
               className={ `${classes.navList} ${url === '/login' || isMenu ? classes.display : ''}` } 
               aria-labelledby='main navigation'
@@ -68,7 +65,7 @@ const Header = () => {
             </List>
             <Button 
               component={ url === '/login' ? 'button' : RouterLink } 
-              to='/login' 
+              to='/' 
               startIcon={ <LockOutlined /> } 
               variant='outlined' 
               className={ `${classes.button} ${url === '/login' ? classes.buttonActive : ''}` }
@@ -80,7 +77,7 @@ const Header = () => {
         </Container>
       </AppBar>
       { url === '/' ? <div className={ classes.offset } /> : null }
-    </Fragment>
+    </>
   );
 };
 

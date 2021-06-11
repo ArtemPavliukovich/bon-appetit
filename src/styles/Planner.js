@@ -18,6 +18,11 @@ const useStyles = makeStyles({
   title: {
     textAlign: 'center',
     paddingBottom: '12px'
+  },
+
+  saveBox: {
+    padding: '15px 0',
+    background: '#fff176'
   }
 });
 

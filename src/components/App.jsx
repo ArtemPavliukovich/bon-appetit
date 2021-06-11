@@ -19,10 +19,10 @@ const App = () => {
     <Container disableGutters={ true } maxWidth={ false } className={ container }>
       <Header />
       <Switch>
-        <Route exact path='/' render={ () => <Home /> } />
+        <Route exact path='/' render={ () => <Login /> } />
+        <Route path='/home' render={ () => <Home /> } />
         <Route path='/favotites' render={ () => <Favorites /> } />
         <Route path='/planner' render={ () => <Planner /> } />
-        <Route path='/login' render={ () => <Login /> } />
         <Route path='/recipes/:id' render={ () => <Recipe /> } />
         <Route path='*' render={ () => <NotFound /> } />
       </Switch>

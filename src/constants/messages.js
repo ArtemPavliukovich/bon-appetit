@@ -14,7 +14,8 @@ const messages = {
       'Friday',
       'Saturday',
       'Sunday'
-    ]
+    ],
+    button: 'Save Planner'
   },
 
   card: {
