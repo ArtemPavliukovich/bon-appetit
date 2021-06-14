@@ -14,8 +14,9 @@ import "@fontsource/roboto/700.css";
 const store = createStore(rootReducer);
 
 store.subscribe(() => {
+  localStorage.setItem('favorites', JSON.stringify(store.getState().favorites));
   localStorage.setItem('planner', JSON.stringify(store.getState().planner));
-})
+});
 
 ReactDOM.render(
   <React.StrictMode>

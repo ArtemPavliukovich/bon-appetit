@@ -10,3 +10,4 @@ export { default as Card } from './Card';
 export { default as Ingredients } from './Ingredients';
 export { default as Field } from './Field';
 export { default as PlannerFields } from './PlannerFields';
+export { default as Recipes } from './Recipes';

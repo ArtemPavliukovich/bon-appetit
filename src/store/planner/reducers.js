@@ -11,7 +11,7 @@ const createDefaultState = () => {
       comment: ''
     }
   }));
-}
+};
 
 /* Эта логика(getDefaultState) нам нужна для того, чтобы, если представить, что проект активен и им пользуются,
 мы смогли менять динамически нашу таблицу и при этом у всех пользлователей все продолжало работать */
@@ -39,7 +39,7 @@ const getDefaultState = () => {
   } else {
     return state;
   }
-}
+};
 
 const defaultState = getDefaultState() ?? createDefaultState();
 

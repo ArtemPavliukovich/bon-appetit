@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, List, ListItem, Link, ListItemText, Button, Container, IconButton } from '@material-ui/core';
-import { LockOutlined, Menu } from '@material-ui/icons';
+import { AppBar, Toolbar, List, ListItem, Link, ListItemText } from '@material-ui/core';
+import { Button, Container, IconButton, Grid, Typography } from '@material-ui/core';
+import { ExitToApp, Menu } from '@material-ui/icons';
 import { Link as RouterLink } from 'react-router-dom';
 import useStyles from '../styles/Header';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import messages from '../constants/messages';
+import Firebase from '../api/firebase';
 // import { ReactComponent as Logo } from '../images/logo.svg';
 
 const navLink = [
-  {title: 'Home', path: '/home'},
-  {title: 'Favorites', path: '/favotites'},
+  {title: 'Home', path: '/'},
+  {title: 'Favorites', path: '/favorites'},
   {title: 'Planner', path: '/planner'}
 ];
+
+const exit = () => {
+  Firebase.exit();
+  window.location.reload();
+};
 
 const Header = () => {
   const [ url, setUrl ] = useState(window.location.pathname);
@@ -27,7 +34,7 @@ const Header = () => {
   
   return (
     <>
-      <AppBar position={ url === '/' ? 'fixed' : 'static'}>
+      <AppBar position={ url === '/' || url === '/favorites' ? 'fixed' : 'static'}>
         <Container disableGutters={ true }> 
           <Toolbar
             component='nav'
@@ -63,20 +70,23 @@ const Header = () => {
                 );
               })}
             </List>
-            <Button 
-              component={ url === '/login' ? 'button' : RouterLink } 
-              to='/' 
-              startIcon={ <LockOutlined /> } 
-              variant='outlined' 
-              className={ `${classes.button} ${url === '/login' ? classes.buttonActive : ''}` }
-              onClick={ () => setUrl('/login') }
-            >
-              {messages.header.button}
-            </Button>
+            <Grid container alignItems='center' justify='flex-end' wrap='nowrap'>
+              <Typography>
+                { Firebase.getUser().email }
+              </Typography>
+              <Button 
+                startIcon={ <ExitToApp /> } 
+                variant='outlined' 
+                className={ classes.button }
+                onClick={ exit }
+              >
+                { messages.header.button }
+              </Button>
+            </Grid>
           </Toolbar>
         </Container>
       </AppBar>
-      { url === '/' ? <div className={ classes.offset } /> : null }
+      { url === '/' || url === '/favorites' ? <div className={ classes.offset } /> : null }
     </>
   );
 };

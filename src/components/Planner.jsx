@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Container, Typography, Box, Button } from '@material-ui/core';
+import { Grid, Container, Typography, Button } from '@material-ui/core';
 import messages from '../constants/messages';
 import useStyles from '../styles/Planner';
 import { Field } from './index';

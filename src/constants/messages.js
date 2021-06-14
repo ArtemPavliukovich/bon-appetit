@@ -27,7 +27,22 @@ const messages = {
   },
 
   header: {
-    button: 'sign in'
+    button: 'sign out'
+  },
+
+  login: {
+    signIn: 'Sign In',
+    registration: 'Registration',
+    isRegistered: 'Don\'t have an account? ',
+    notRegistered: 'Already have an account? '
+  },
+
+  home: {
+    searchButton: 'Search'
+  },
+
+  recipes: {
+    error: 'Nothing found'
   }
 };
 

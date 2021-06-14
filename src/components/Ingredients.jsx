@@ -3,11 +3,11 @@ import { Grid, Typography, Dialog, DialogTitle, DialogContent, IconButton } from
 import { Close } from '@material-ui/icons';
 import messages from '../constants/messages';
 
-const Ingredients = ({ open, setOpen, ingredients }) => {
+const Ingredients = ({ openIngredients, setOpenIngredients, ingredients }) => {
   return (
     <Dialog 
-      open={ open } 
-      onClose={ () => setOpen(false) } 
+      open={ openIngredients } 
+      onClose={ () => setOpenIngredients(false) } 
       aria-labelledby='dialog-title'
       fullWidth
     >
@@ -16,16 +16,16 @@ const Ingredients = ({ open, setOpen, ingredients }) => {
           <Typography variant='h6'>
             {messages.card.dialogTitle}
           </Typography>
-          <IconButton aria-label='close' onClick={ () => setOpen(false) }>
+          <IconButton aria-label='close' onClick={ () => setOpenIngredients(false) }>
             <Close />
           </IconButton>
         </Grid>
       </DialogTitle>
       <DialogContent dividers>
-        {ingredients.map((item, i) => {
+        {ingredients.map((ingredient, i) => {
           return (
             <Typography key={ i + 'ingredient' }>
-              {item.text}
+              {ingredient.text}
             </Typography>
           );
         })}

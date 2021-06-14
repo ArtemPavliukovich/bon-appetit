@@ -14,23 +14,50 @@ export default class Firebase {
   static error (err) {
     switch (err) {
       case 'auth/email-already-in-use':
-        return 'This email address is already in use';
+        return {
+          text: 'This email address is already in use',
+          type: 'email'
+        };
       case 'auth/invalid-email':
-        return 'Enter the correct email address';
+        return {
+          text: 'Enter the correct email address',
+          type: 'email'
+        };
       case 'auth/operation-not-allowed':
-        return 'The operation is not available, please contact support';
+        return {
+          text: 'The operation is not available, please contact support',
+          type: 'email'
+        };
       case 'auth/weak-password':
-        return 'Come up with a more complex password';
+        return {
+          text: 'Come up with a more complex password',
+          type: 'password'
+        };
       case 'auth/invalid-email':
-        return 'The entered email address does not exist';
+        return {
+          text: 'The entered email address does not exist',
+          type: 'email'
+        };
       case 'auth/user-disabled':
-        return 'You were disconnected from the system, log in again';
+        return {
+          text: 'You were disconnected from the system, log in again',
+          type: 'email'
+        };
       case 'auth/user-not-found':
-        return 'Incorrect email address entered';
+        return {
+          text: 'Incorrect email address entered',
+          type: 'email'
+        };
       case 'auth/wrong-password':
-        return 'Wrong password entered';
+        return {
+          text: 'Wrong password entered',
+          type: 'password'
+        };
       default:
-        return 'Error, repeat the request';
+        return {
+          text: 'Error, repeat the request',
+          type: 'email'
+        };
     }
   }
 
@@ -39,12 +66,12 @@ export default class Firebase {
   }
 
   static autorization ({ email, password, type }) {
-    const funcAutorization = type === 'sign-in' 
-      ? firebase.auth().signInWithEmailAndPassword
-      : firebase.auth().createUserWithEmailAndPassword;
+    const nameFuncAuth = type === 'login' 
+      ? 'signInWithEmailAndPassword'
+      : 'createUserWithEmailAndPassword';
 
     return new Promise((resolve, reject) => {
-      funcAutorization(email, password)
+      firebase.auth()[nameFuncAuth](email, password)
         .then(userCredential => resolve(userCredential.user))
         .catch(err => reject(this.error(err.code)));
     });
@@ -53,7 +80,7 @@ export default class Firebase {
   static isAutorization () {
     return new Promise(resolve => {
       firebase.auth().onAuthStateChanged(user => {
-        return user ? resolve(true) : resolve(false);
+        user ? resolve(true) : resolve(false);
       });
     });
   }

@@ -18,8 +18,7 @@ const useStyles = makeStyles(theme => ({
   offset: theme.mixins.toolbar,
 
   display: {display: 'none'},
-  flexEnd: {justifyContent: 'flex-end'},
-  buttonActive: {backgroundColor: '#303f9f'}
+  flexEnd: {justifyContent: 'flex-end'}
 }));
 
 export default useStyles;
