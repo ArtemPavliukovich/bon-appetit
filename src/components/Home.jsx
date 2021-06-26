@@ -1,98 +1,152 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Edamam from '../api/edamam';
-import { Container, Grid, CircularProgress, TextField, Button } from '@material-ui/core';
-import { Recipes } from './index';
+import { Edamam, meal, diet } from '../api/edamam';
+import { Container, Grid, TextField, Button } from '@material-ui/core';
+import { Recipes, Preloader, Filter } from './index';
 import useStyles from '../styles/Home';
 import messages from '../constants/messages';
+import { nanoid } from 'nanoid';
+import { setHistoryState, getHistoryState, setScrollPosition } from '../api/history';
+
+const defaultState = {
+  recipes: [],
+  page: 0,
+  query: '',
+  isNextQuery: false,
+  preloader: 'not-filter',
+  popstate: false,
+  filter: {
+    meal: '',
+    diet: ''
+  },
+  scroll: {
+    value: null,
+    isPageLoad: false
+  }
+};
 
 const Home = () => {
-  const [ recipes, setRecipes ] = useState([]);
-  const [ page, setPage ] = useState(0);
-  const [ query, setQuery ] = useState('');
-
-  const preloder = useRef(true);
-  const isData = useRef(undefined);
-  const load = useRef(true);
-  const isQuery = useRef(false);
-  const queryValue = useRef(query);
-
-  const { main } = useStyles();
-
-  const addQuery = () => {
-    isQuery.current = true;
-    isData.current = false;
-    setQuery(queryValue.current);
-  }
-
+  const [ state, setState ] = useState(getHistoryState() ?? defaultState);
+  const queryValue = useRef(state.query); // для неуправляемого input
+  const isLoad = useRef(false); // для флага, который разрешает next запрос к api
+  const classes = useStyles();
+  
+  const sendQuery = () => {
+    if (state.query !== queryValue.current) {
+      setState(prev => ({
+        ...prev,
+        recipes: [],
+        page: 0,
+        preloader: 'filter',
+        query: queryValue.current
+      }));
+    }
+  };
+  
   useEffect(() => {
     let isMounted = true;
+
+    setHistoryState({
+      ...state,
+      preloader: false,
+      isNextQuery: true,
+      recipes: [],
+      popstate: false
+    });
     
-    Edamam.getData({
-     apiType: 'recipeSearch', 
-     page: page,
-     text: query,
-     type: 'q'
+    Edamam.getRecipe({
+      type: 'q',
+      page: state.page,
+      text: state.query,
+      filter: state.filter,
+      popstate: state.popstate
     })
       .then(data => {
-        preloder.current = false;
-        load.current = true;
-        isData.current = data.more;
         if (isMounted) {
-          if (isQuery.current) {
-            isQuery.current = false;
-            setRecipes([data.hits][0]);
-          } else {
-            setRecipes(prev => [...prev, ...[data.hits][0]]);
-          }
+          isLoad.current = data.more;
+          setState(prev => ({
+            ...prev,
+            preloader: false,
+            isNextQuery: true,
+            popstate: false,
+            scroll: {
+              ...prev.scroll,
+              isPageLoad: prev.preloader
+            },
+            recipes: [...prev.recipes, ...[data.hits][0].map(el => {
+              const recipe = Object.values(el)[0];
+              recipe.id = nanoid();
+              return recipe;
+            })],
+          }));
         }
       });
 
     return (() => {isMounted = false});
-  }, [page, query]);
-
-  const loadContent = () => {
-    const bodyHeight = document.body.offsetHeight,
-          screenHeight = document.documentElement.clientHeight,
-          scrollHeight = window.pageYOffset;
-    
-    if (isData.current && load.current && bodyHeight - screenHeight - scrollHeight < 700) {
-      load.current = false;
-      setPage(prev => prev + 1);
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.page, state.query, state.filter]);
 
   useEffect(() => {
-    window.addEventListener('scroll', loadContent, {passive: true});
-    return () => {
-      window.removeEventListener('scroll', loadContent, {passive: true});
+    const lazyLoadContent = () => {
+      const bodyHeight = document.body.offsetHeight,
+            screenHeight = document.documentElement.clientHeight,
+            scrollHeight = window.pageYOffset;
+      
+      if (state.isNextQuery && isLoad.current && bodyHeight - screenHeight - scrollHeight < 1000) {
+        isLoad.current = false;
+        setState(prev => ({
+          ...prev,
+          page: prev.page + 1,
+          isNextQuery: false
+        }));
+      }
     };
-  }, []);
-  
+
+    if (state.scroll.isPageLoad) {
+      setScrollPosition(null);
+      window.scrollTo(0, +state.scroll.value);
+    }
+
+    window.addEventListener('scroll', lazyLoadContent, {passive: true});
+
+    return () => {
+      window.removeEventListener('scroll', lazyLoadContent, {passive: true});
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.recipes]);
+
   return (
-    <Container component='main' className={ main }>
-      {recipes.length || !preloder.current
+    <Container component='main' className={ classes.main }>
+      {state.recipes.length || !(state.preloader && state.preloader === 'not-filter')
         ? <Grid container spacing={ 3 }>
-            <Grid container justify='center'>
-              <TextField
-                size='small'
-                label='Search for recipes' 
-                variant='outlined' 
-                onChange={ (e) => queryValue.current = e.target.value.trim() }
-              />
-              <Button
-                size='small'
-                variant='outlined'
-                style={{marginLeft: '12px'}}
-                onClick={ addQuery }
-              >
-                { messages.home.searchButton }
-              </Button>
+            <Grid container justify='space-between' className={ classes.filterBoxes }>
+              <Grid container className={ classes.filterBox }>
+                <Filter items={ meal } setState={ setState } name={ 'Meal' } value={ state.filter.meal } />
+                <Filter items={ diet } setState={ setState } name={ 'Diet' } value={ state.filter.diet } />
+              </Grid>
+              <Grid container justify='center' className={ classes.filterBox }>
+                <TextField
+                  size='small'
+                  label='Search for recipes' 
+                  variant='outlined'
+                  defaultValue={ state.query }
+                  onChange={ (e) => queryValue.current = e.target.value.trim() }
+                />
+                <Button
+                  size='small'
+                  variant='outlined'
+                  style={{marginLeft: '12px'}}
+                  onClick={ sendQuery }
+                >
+                  { messages.home.searchButton }
+                </Button>
+              </Grid>
             </Grid>
-            <Recipes recipes={ recipes } typeButtonCard={ 'add' } />
+            {state.preloader === 'filter'
+              ? <Preloader height={ '100%' } />
+              : <Recipes recipes={ state.recipes } typeButtonCard={ 'add' } />
+            }
           </Grid>
-        : <Grid container justify='center' alignItems='center'>
-            <CircularProgress size={ 50 } />
-          </Grid>
+        : <Preloader height={ 'auto' } />
       }
     </Container>
   );

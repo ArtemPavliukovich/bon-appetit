@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Typography, Dialog, DialogTitle, DialogContent, IconButton } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import messages from '../constants/messages';
+import PropTypes from 'prop-types';
 
 const Ingredients = ({ openIngredients, setOpenIngredients, ingredients }) => {
   return (
@@ -32,6 +33,14 @@ const Ingredients = ({ openIngredients, setOpenIngredients, ingredients }) => {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+Ingredients.propTypes = {
+  openIngredients: PropTypes.bool.isRequired,
+  setOpenIngredients: PropTypes.func.isRequired,
+  ingredients: PropTypes.arrayOf(PropTypes.shape({
+    text: PropTypes.string.isRequired
+  }))
+};
 
 export default Ingredients;

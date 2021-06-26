@@ -18,17 +18,11 @@ const messages = {
     button: 'Save Planner'
   },
 
-  card: {
-    dialogTitle: 'Ingredients List'
-  },
+  card: {dialogTitle: 'Ingredients List'},
 
-  plannerFields: {
-    button: 'Add to planner'
-  },
+  plannerFields: {button: 'Add to planner'},
 
-  header: {
-    button: 'sign out'
-  },
+  header: {button: 'sign out'},
 
   login: {
     signIn: 'Sign In',
@@ -37,12 +31,18 @@ const messages = {
     notRegistered: 'Already have an account? '
   },
 
-  home: {
-    searchButton: 'Search'
-  },
+  home: {searchButton: 'Search'},
 
-  recipes: {
-    error: 'Nothing found'
+  recipes: {error: 'Nothing found'},
+
+  recipe: {
+    link: 'Cooking instructions...',
+    tableHead: [
+      'Nutrient',
+      'Code',
+      'Daily(%)',
+      'Total'
+    ]
   }
 };
 

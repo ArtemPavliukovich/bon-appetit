@@ -2,18 +2,20 @@ import React from 'react';
 import { Card } from './index';
 import { Grid, Typography } from '@material-ui/core';
 import messages from '../constants/messages';
+import { SnackbarProvider } from 'notistack';
+import PropTypes from 'prop-types';
 
 const Recipes = ({ recipes, typeButtonCard }) => {
   return (
-    <>
+    <SnackbarProvider maxSnack={ 3 } autoHideDuration={ 2000 }>
       {recipes.length 
-        ? recipes.map((el, i) => (
+        ? recipes.map(recipe => (
             <Card 
-              recipe={ el?.recipe ?? el }
-              key={ i + 'recipe' }
+              recipe={ recipe }
+              key={ recipe.id }
               typeButtonCard={ typeButtonCard }
             />
-          ))
+          ))                
         : <Grid 
             container 
             justify='center' 
@@ -25,8 +27,15 @@ const Recipes = ({ recipes, typeButtonCard }) => {
             </Typography>
           </Grid>
       }
-    </>
+    </SnackbarProvider>
   );
 };
 
-  export default Recipes;
+Recipes.propTypes = {
+  typeButtonCard: PropTypes.string.isRequired,
+  recipes: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }))
+};
+
+export default Recipes;

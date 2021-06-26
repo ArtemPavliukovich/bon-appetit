@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Container, Typography, Button } from '@material-ui/core';
-import messages from '../constants/messages';
 import useStyles from '../styles/Planner';
 import { Field } from './index';
 import SaveIcon from '@material-ui/icons/Save';
 import html2canvas from 'html2canvas';
+import { useSelector, useDispatch } from 'react-redux';
+import messages from '../constants/messages';
+import { changePlanner } from '../store/actions';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const saveScreenPlanner = () => {
   html2canvas(document.getElementById('planner'))
@@ -18,8 +21,18 @@ const saveScreenPlanner = () => {
 
 const Planner = () => {
   const classes = useStyles();
-  const { planner } = messages;
+  const fields = useSelector(state => state.planner);
+  const plannerBudge = useSelector(state => state.nav);
+  const dispatch = useDispatch();
+  const isMaxWidth640 = useMediaQuery('(max-width: 640px)');
 
+  useEffect(() => {
+    if (plannerBudge.planner) {
+      dispatch(changePlanner({isChange: false}));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
   return (
     <>
       <Grid container justify='center' className={ classes.saveBox }>
@@ -29,13 +42,13 @@ const Planner = () => {
           startIcon={ <SaveIcon /> }
           onClick={ saveScreenPlanner }
         >
-          {planner.button}
+          {messages.planner.button}
         </Button>
       </Grid>
       <Grid container justify='center' alignItems='center' className={ classes.plannerWrap }>
         <Container maxWidth='md' className={ classes.planner } id='planner'>
           <Grid container>
-            {planner.title.map((title, i) =>
+            {messages.planner.title.map((title, i) =>
               <Grid 
                 item 
                 key={ title + i } 
@@ -44,12 +57,12 @@ const Planner = () => {
                 variant='h6'
                 xs={ i === 0 || i === 3 ? 2 : 4 }
               >
-                {title}
+                { i === 3 && isMaxWidth640 ? '' : title }
               </Grid>
             )}
           </Grid>
-          {planner.fields.map((field, i) => 
-            <Field fieldName={ field } key={ field + i } i={ i } />
+          {fields.map((field, i) => 
+            <Field field={ field } key={ i + 'field' } />
           )}
         </Container>
       </Grid>

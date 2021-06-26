@@ -33,11 +33,6 @@ export default class Firebase {
           text: 'Come up with a more complex password',
           type: 'password'
         };
-      case 'auth/invalid-email':
-        return {
-          text: 'The entered email address does not exist',
-          type: 'email'
-        };
       case 'auth/user-disabled':
         return {
           text: 'You were disconnected from the system, log in again',

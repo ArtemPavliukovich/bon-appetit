@@ -2,29 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import rootReducer from './store/reducers';
+import { store, persistor } from './store/store';
 import { App } from './components/index';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import "@fontsource/roboto";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-
-const store = createStore(rootReducer);
-
-store.subscribe(() => {
-  localStorage.setItem('favorites', JSON.stringify(store.getState().favorites));
-  localStorage.setItem('planner', JSON.stringify(store.getState().planner));
-});
+import { PersistGate } from 'redux-persist/integration/react';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={ store }>
-      <BrowserRouter>
-        <CssBaseline />
-        <App />
-      </BrowserRouter>
+      <PersistGate loading={ null } persistor={ persistor }>
+        <BrowserRouter>
+          <CssBaseline />
+          <App />
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

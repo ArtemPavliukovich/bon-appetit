@@ -1,40 +1,40 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import useStyles from '../styles/Login';
-import { Grid, TextField, InputAdornment, Avatar, Typography, Button, Link } from '@material-ui/core';
-import { AccountCircle, VpnKey, LockOutlined, ArrowForward } from '@material-ui/icons';
+import { Grid, Avatar, Typography, Button, Link } from '@material-ui/core';
+import { LockOutlined, ArrowForward } from '@material-ui/icons';
 import Firebase from '../api/firebase';
 import messages from '../constants/messages';
-
-const userAutorization = {
-  type: 'login',
-  email: '',
-  password: ''
-};
+import { LoginInput } from './index';
 
 const Login = () => {
-  const [ typeAuth, setTypeAuth ] = useState(userAutorization.type);
+  const [ authorization, setAuthorization ] = useState({
+    type: 'login',
+    email: '',
+    password: ''
+  });
+  
   const [ error, setError ] = useState('');
-  const form = useRef(null);
   const classes = useStyles();
   const { login } = messages;
   
   const changeType = (e) => {
     e.preventDefault();
-    userAutorization.email = '';
-    userAutorization.password = '';
-    userAutorization.type = typeAuth === 'login' ? 'register' : 'login';
-    form.current.reset();
-    setTypeAuth(userAutorization.type);
+    setAuthorization(prev => ({
+      type: prev.type === 'login' ? 'register' : 'login',
+      email: '',
+      password: ''
+    }));
   }
 
   useEffect(() => {
     if (error) {
       setError('');
     }
-  }, [typeAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authorization.type]);
 
   const autorization = () => {
-    Firebase.autorization(userAutorization)
+    Firebase.autorization(authorization)
       .then(() => window.location.reload())
       .catch(err => setError(err));
   }
@@ -47,47 +47,24 @@ const Login = () => {
       alignContent='center'
       className={ classes.main }
     >
-      <Grid item component='form' xs={ 10 } sm={ 6 } md={ 4 } lg={ 3 } className={ classes.form } ref={ form }>
+      <Grid item component='form' xs={ 10 } sm={ 6 } md={ 4 } lg={ 3 } className={ classes.form }>
         <Avatar className={ classes.pink }>
-          { typeAuth === 'login' ? <LockOutlined /> : <ArrowForward /> }
+          { authorization.type === 'login' ? <LockOutlined /> : <ArrowForward /> }
         </Avatar>
         <Typography variant='h5' align='center' gutterBottom>
-          { typeAuth === 'login' ? login.signIn : login.registration }
+          { authorization.type === 'login' ? login.signIn : login.registration }
         </Typography>
-        <TextField
-          autoFocus
-          autoComplete='off'
-          fullWidth
-          error={ Boolean(error) && error.type === 'email' }
-          helperText={ error?.type === 'email' ? error.text : '' }
-          label='email'
-          variant='filled'
-          margin='normal'
-          onChange={ (e) => userAutorization.email = e.target.value }
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <AccountCircle />
-              </InputAdornment>
-            ),
-          }}
+        <LoginInput 
+          setAuthorization={ setAuthorization }
+          type={ 'email' }
+          value={ authorization['email'] }
+          error={ error }
         />
-        <TextField
-          fullWidth
-          label='password'
-          variant='filled'
-          type='password'
-          margin='normal'
-          onChange={ (e) => userAutorization.password = e.target.value }
-          error={ Boolean(error) && error.type === 'password' }
-          helperText={ error?.type === 'password' ? error.text : '' }
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <VpnKey />
-              </InputAdornment>
-            ),
-          }}
+        <LoginInput 
+          setAuthorization={ setAuthorization }
+          type={ 'password' }
+          value={ authorization['password'] }
+          error={ error }
         />
         <Button
           fullWidth
@@ -97,13 +74,13 @@ const Login = () => {
           className={ classes.margin }
           onClick={ autorization }
         >
-          { typeAuth === 'login' ? login.signIn : login.registration }
+          { authorization.type === 'login' ? login.signIn : login.registration }
         </Button>
         <Typography variant='body2' display='inline'>
-          { typeAuth === 'login' ? login.isRegistered : login.notRegistered }
+          { authorization.type === 'login' ? login.isRegistered : login.notRegistered }
         </Typography>
         <Link href='#' onClick={ changeType } variant='body2'>
-          { typeAuth === 'login' ? login.registration : login.signIn }
+          { authorization.type === 'login' ? login.registration : login.signIn }
         </Link>
       </Grid>
     </Grid>

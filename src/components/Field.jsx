@@ -2,77 +2,88 @@ import React, { useState } from 'react';
 import { Grid, Typography, Link, IconButton, Input } from '@material-ui/core';
 import { Create, DeleteForeverOutlined, CheckCircleOutline } from '@material-ui/icons';
 import useStyles from '../styles/Field';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setPlannerField } from '../store/actions';
+import PropTypes from 'prop-types';
 
-const Field = ({ fieldName, i }) => {
+const Field = ({ field }) => {
   const classes = useStyles();
-  const [ comment, setComment ] = useState(false);
   const dispatch = useDispatch();
-  const [ field ] = useSelector(state => state.planner).filter(field => Object.keys(field)[0] === fieldName);
+  const fieldName = Object.keys(field).join('');
+  const { title, url, comment } = field[fieldName];
+  const [ commentField, setCommentField ] = useState({
+    input: false,
+    text: comment
+  });
   
-  const addComment = (e) => {
-    if (e.key === 'Enter') {
-      setComment(!comment);
+  const setComment = (add = true) => {
+    if (comment !== commentField.text || !add) {
+      dispatch(setPlannerField({
+        title: add ? title : '',
+        url: add ? url : '#',
+        fieldName: fieldName,
+        comment: add ? commentField.text : ''
+      }));
     }
+
+    setCommentField(prev => ({
+      ...prev,
+      input: false
+    }));
   };
 
   return (
-    <Grid container className={ `${classes.field} ${i % 2 === 0 ? classes.fon : ''}` }>
-      <Grid item xs={ 2 } component={ Typography } variant='button'>
-        {fieldName}
+    <Grid container className={ classes.field }>
+      <Grid item xs={ 2 }>
+        <Typography variant='button' className={ classes.title }>
+          {fieldName}
+        </Typography>
       </Grid>
       <Grid item xs={ 4 }>
         <Link 
-          href={ `${field[fieldName].url}` }
+          href={ `${url}` }
           target='_blank' 
           rel='noopener noreferrer' 
           underline='none'
           color='inherit'
         >
-          {field[fieldName].title}
+          {title}
         </Link>
       </Grid>
       <Grid 
         item 
         xs={ 4 }
         className={ classes.comment }
-        component={ comment ? Input : 'div' }
+        component={ commentField.input ? Input : 'div' }
         autoFocus
-        defaultValue={ field[fieldName].comment }
-        onChange={(e) => dispatch(setPlannerField({
-          title: field[fieldName].title,
-          url: field[fieldName].url,
-          field: fieldName,
-          comment: e.target.value
+        defaultValue={ comment }
+        onChange={(e) => setCommentField(prev => ({
+          ...prev,
+          text: e.target.value.trim()
         }))}
-        onKeyPress={ addComment }
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            setComment();
+          }   
+        }}
       >
-        { field[fieldName].comment }
+        { comment }
       </Grid>
       <Grid item xs={ 2 } className={ classes.actions }>
         <IconButton 
           aria-label='change comment'
-          onClick={ () => setComment(!comment) }
-          className={ `${comment ? classes.iconColor : ''}` }
+          className={ `${commentField.input ? classes.iconColor : ''}` }
+          onClick={ () => commentField.input ? setComment() : setCommentField(prev => ({
+            ...prev,
+            input: !prev.input
+          }))}
         >
-          { comment ? <CheckCircleOutline /> : <Create /> }
+          { commentField.input ? <CheckCircleOutline /> : <Create /> }
         </IconButton>
         <IconButton
           color='secondary' 
           aria-label='delete recipe'
-          onClick={() => {
-            dispatch(setPlannerField({
-              title: '',
-              url: '#',
-              field: fieldName,
-              comment: ''
-            }));
-
-            if (comment) {
-              setComment(false);
-            }
-          }}
+          onClick={ () => setComment(false) }
         >
           <DeleteForeverOutlined />
         </IconButton>
@@ -81,4 +92,12 @@ const Field = ({ fieldName, i }) => {
   );
 };
 
-export default Field;
+Field.propTypes = {
+  field: PropTypes.objectOf(PropTypes.shape({
+    url: PropTypes.string.isRequired,
+    comment: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+  })).isRequired
+};
+
+export default React.memo(Field);

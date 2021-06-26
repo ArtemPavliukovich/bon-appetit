@@ -7,7 +7,18 @@ const useStyles = makeStyles({
     display: 'flex'
   },
 
-  padding: {padding: '24px'}
+  filterBoxes: {padding: '0 12px'},
+  
+  filterBox: {
+    width: 'auto',
+    ['@media (max-width: 680px)']: { // eslint-disable-line no-useless-computed-key
+      width: '100%',
+      '&:first-child': {
+        marginBottom: '12px',
+        justifyContent: 'center'
+      }
+    },
+  }
 });
 
 export default useStyles;

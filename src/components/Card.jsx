@@ -1,36 +1,38 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useStyles from '../styles/Card';
-import { Grid, Card, CardMedia, CardActionArea, Typography, Chip, CardContent, IconButton, Snackbar } from '@material-ui/core';
-//import MuiAlert from '@material-ui/lab/Alert';
+import { Grid, Card, CardMedia, CardActionArea, Typography, Chip, CardContent, IconButton } from '@material-ui/core';
 import { MenuBookTwoTone, MoodBadOutlined, Favorite, PostAdd, DeleteOutlineOutlined } from '@material-ui/icons';
 import { Ingredients, PlannerFields } from './index';
 import { LoremIpsum } from 'lorem-ipsum';
-import { useSelector, useDispatch } from 'react-redux';
-import { addFavoriteRecipe, deleteFavoriteRecipe } from '../store/actions';
+import { useDispatch } from 'react-redux';
+import { addFavoriteRecipe, deleteFavoriteRecipe, addRecipe } from '../store/actions';
+import { useSnackbar } from 'notistack';
+import { store } from '../store/store';
+import PropTypes from 'prop-types';
+import { setScrollPosition } from '../api/history';
 
 const regexp = new RegExp('^.*recipe_(.+)$', 'i');
 
 const MyCard = ({ recipe, typeButtonCard }) => {
   const [ openIngredients, setOpenIngredients ] = useState(false);
   const [ openPlannerFields, setPlannerFields ] = useState(false);
-  const [ error, setError ] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const favorites = useSelector(state => state.favorites);
+  const { enqueueSnackbar } = useSnackbar();
   
   const setFavorite = () => {
     if (typeButtonCard === 'add') {
-      if (favorites.every(el => el.uri !== recipe.uri)) {
+      if (store.getState().favorites.every(el => el.uri !== recipe.uri)) {
         dispatch(addFavoriteRecipe({recipe: recipe}));
+        dispatch(addRecipe({countRecipe: 1}));
       } else {
-        // add snackbar
-        setError(true);
+        enqueueSnackbar('This recipe already exists!', {variant: 'warning'});
       }
     } else {
       dispatch(deleteFavoriteRecipe({id: recipe.uri}));
     }
-  }
+  };
   
   const lorem = useMemo(() => {
     return new LoremIpsum({
@@ -43,7 +45,7 @@ const MyCard = ({ recipe, typeButtonCard }) => {
         min: 4
       }
     }).generateParagraphs(2);
-  }, [recipe]);
+  }, []);
   
   return (
     <Grid item xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 }>
@@ -51,6 +53,7 @@ const MyCard = ({ recipe, typeButtonCard }) => {
         <CardActionArea 
           component={ Link } 
           to={ `/recipes/${recipe.uri.replace(regexp, '$1')}` }
+          onClick={ () => setScrollPosition(window.pageYOffset) }
         >
           <CardMedia
             className={ classes.media }
@@ -82,11 +85,6 @@ const MyCard = ({ recipe, typeButtonCard }) => {
               disabled
             />
           </Grid>
-          <Ingredients
-            openIngredients={ openIngredients } 
-            setOpenIngredients= { setOpenIngredients } 
-            ingredients={ recipe.ingredients }
-          />
           <IconButton 
             aria-label='add to favorites' 
             className={ classes.favoriteIcon }
@@ -101,6 +99,11 @@ const MyCard = ({ recipe, typeButtonCard }) => {
           >
             <PostAdd />
           </IconButton>
+          <Ingredients
+            openIngredients={ openIngredients } 
+            setOpenIngredients= { setOpenIngredients } 
+            ingredients={ recipe.ingredients }
+          />
           <PlannerFields
             openPlannerFields={ openPlannerFields } 
             setPlannerFields= { setPlannerFields }
@@ -109,13 +112,20 @@ const MyCard = ({ recipe, typeButtonCard }) => {
           />
         </CardContent>
       </Card>
-      {/* <Snackbar open={error} autoHideDuration={6000}>
-        <MuiAlert onClose={handleClose} severity="success">
-          This is a success message!
-        </MuiAlert>
-      </Snackbar> */}
     </Grid>
   );
-}
+};
+
+MyCard.propTypes = {
+  recipe: PropTypes.shape({
+    uri: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    ingredients: PropTypes.array.isRequired,
+    calories: PropTypes.number.isRequired
+  }).isRequired,
+  typeButtonCard: PropTypes.string.isRequired
+};
 
 export default React.memo(MyCard);

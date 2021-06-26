@@ -1,13 +1,14 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import messages from '../constants/messages';
 import { Dialog, Select, MenuItem, DialogContent, Button } from '@material-ui/core';
 import useStyles from '../styles/PlannerFields';
 import { useDispatch } from 'react-redux';
-import { setPlannerField } from '../store/actions';
+import { setPlannerField, changePlanner } from '../store/actions';
+import PropTypes from 'prop-types';
 
 const PlannerFields = ({ openPlannerFields, setPlannerFields, title, url }) => {
   const { fields } = messages.planner;
-  const valueSelect = useRef(fields[0]);
+  const [ valueSelect, setValueSelect ] = useState('');
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -18,10 +19,10 @@ const PlannerFields = ({ openPlannerFields, setPlannerFields, title, url }) => {
       aria-labelledby='dialog-title'
     >
       <DialogContent>
-        <Select 
-          defaultValue={ valueSelect.current }
+        <Select
+          value={ valueSelect }
           variant='outlined'
-          onChange={ (e) => valueSelect.current = e.target.value }
+          onChange={ (e) => setValueSelect(e.target.value) }
           className={ classes.select }
         >
           {fields.map(fieldName => 
@@ -37,9 +38,10 @@ const PlannerFields = ({ openPlannerFields, setPlannerFields, title, url }) => {
           dispatch(setPlannerField({
             title: title,
             url: url,
-            field: valueSelect.current,
+            fieldName: valueSelect,
             comment: ''
           }));
+          dispatch(changePlanner({isChange: true}));
           setPlannerFields(false);
         }}
       >
@@ -47,6 +49,13 @@ const PlannerFields = ({ openPlannerFields, setPlannerFields, title, url }) => {
       </Button>
     </Dialog>
   );
-}
+};
+
+PlannerFields.propTypes = {
+  openPlannerFields: PropTypes.bool.isRequired,
+  setPlannerFields: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired
+};
 
 export default PlannerFields;
