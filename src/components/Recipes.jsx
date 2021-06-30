@@ -20,7 +20,7 @@ const Recipes = ({ recipes, typeButtonCard }) => {
             container 
             justify='center' 
             alignItems='center' 
-            style={ {height: `${typeButtonCard === 'add' ? '100%' : 'auto'}`} }
+            style={{flexGrow: '1'}}
           >
             <Typography color='secondary' variant='h6'>
               { messages.recipes.error.toUpperCase() }

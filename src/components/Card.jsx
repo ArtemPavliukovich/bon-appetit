@@ -11,6 +11,7 @@ import { useSnackbar } from 'notistack';
 import { store } from '../store/store';
 import PropTypes from 'prop-types';
 import { setScrollPosition } from '../api/history';
+import noPhoto from '../images/no-photo.svg';
 
 const regexp = new RegExp('^.*recipe_(.+)$', 'i');
 
@@ -33,6 +34,10 @@ const MyCard = ({ recipe, typeButtonCard }) => {
       dispatch(deleteFavoriteRecipe({id: recipe.uri}));
     }
   };
+
+  const openRecipe = () => {
+    setScrollPosition(window.pageYOffset);
+  };
   
   const lorem = useMemo(() => {
     return new LoremIpsum({
@@ -51,13 +56,16 @@ const MyCard = ({ recipe, typeButtonCard }) => {
     <Grid item xs={ 12 } sm={ 6 } md={ 4 } lg={ 3 }>
       <Card raised className={ classes.card }>
         <CardActionArea 
-          component={ Link } 
+          component={ Link }
           to={ `/recipes/${recipe.uri.replace(regexp, '$1')}` }
-          onClick={ () => setScrollPosition(window.pageYOffset) }
+          onClick={ openRecipe }
         >
           <CardMedia
             className={ classes.media }
-            image={ recipe.image }
+            image={ ' ' }
+            style={{
+              background: `url(${recipe.image}) no-repeat center / cover, url(${noPhoto}) no-repeat center / 100% 100%`
+            }}
             title='open'
           />
           <Typography variant='h6' align='center' className={ classes.title }>

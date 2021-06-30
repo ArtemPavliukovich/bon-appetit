@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Button, Container, IconButton, Grid, Typography, Drawer } from '@material-ui/core';
 import { ExitToApp, Menu } from '@material-ui/icons';
 import useStyles from '../styles/Header';
@@ -6,6 +6,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import messages from '../constants/messages';
 import Firebase from '../api/firebase';
 import { NavList } from './index';
+import { useLocation } from 'react-router-dom';
 
 const exit = () => {
   Firebase.exit();
@@ -13,20 +14,14 @@ const exit = () => {
 };
 
 const Header = () => {
-  const [ url, setUrl ] = useState(window.location.pathname);
+  const { pathname } = useLocation();
   const [ open, setOpen ] = useState(false);
   const isMenu = useMediaQuery('(max-width: 640px)');
   const classes = useStyles();
   
-  useEffect(() => {
-    window.addEventListener('popstate', () => {
-      setUrl(window.location.pathname);
-    });
-  }, []);
-  
   return (
     <>
-      <AppBar position={ url === '/' || url === '/favorites' ? 'fixed' : 'static'}>
+      <AppBar position={ pathname === '/' || pathname === '/favorites' ? 'fixed' : 'static' }>
         <Container disableGutters={ true }> 
           <Toolbar
             component='nav'
@@ -49,16 +44,14 @@ const Header = () => {
                   <NavList 
                     open={ open } 
                     setOpen={ setOpen } 
-                    url={ url } 
-                    setUrl={ setUrl } 
+                    url={ pathname } 
                     isMenu={ isMenu }
                   />
                 </Drawer>
               : <NavList 
                   open={ open } 
                   setOpen={ setOpen } 
-                  url={ url } 
-                  setUrl={ setUrl } 
+                  url={ pathname } 
                   isMenu={ isMenu }
                 />
             }
@@ -78,7 +71,7 @@ const Header = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      { url === '/' || url === '/favorites' ? <div className={ classes.offset } /> : null }
+      { pathname === '/' || pathname === '/favorites' ? <div className={ classes.offset } /> : null }
     </>
   );
 };

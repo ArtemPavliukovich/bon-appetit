@@ -31,10 +31,7 @@ window.addEventListener('beforeunload', () => {
     if (state) {
       state.preloader = 'not-filter';
       state.page = 0;
-      state.scroll = {
-        value: null,
-        isPageLoad: false
-      };
+      state.scroll = null;
       setHistoryState(state);
     }
   }
@@ -46,12 +43,8 @@ export const getHistoryState = () => {
 
 export const setScrollPosition = (value) => {
   const state = getHistoryState();
-  
   setHistoryState({
     ...state,
-    scroll: {
-      isPageLoad: false,
-      value: value
-    }
+    scroll: value
   });
 };

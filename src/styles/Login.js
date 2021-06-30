@@ -4,8 +4,7 @@ import fon from '../images/fon.png';
 
 const useStyles = makeStyles((theme) => ({
   pink: {
-    color: theme.palette.getContrastText(pink[500]),
-    backgroundColor: pink[500],
+    backgroundColor: `${pink[500]}!important`,
     margin: '6px auto'
   },
 

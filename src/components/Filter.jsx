@@ -23,6 +23,7 @@ const Filter = ({ setState, items, name, value }) => {
       preloader: 'filter',
       recipes: [],
       page: 0,
+      scroll: null,
       filter: {
         ...prev.filter,
         [name.toLowerCase()]: e.target.value

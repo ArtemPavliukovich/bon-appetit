@@ -42,7 +42,7 @@ const Recipe = () => {
 
   return (
     <Container component='main' className={ classes.main }>
-      {!recipe ? <Preloader height={ 'auto' }/> :
+      {!recipe ? <Preloader /> :
         <>
           <Typography variant='h5' align='center' style={{width: '100%'}} gutterBottom>
             { recipe.label }

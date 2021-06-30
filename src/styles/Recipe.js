@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import noPhoto from '../images/no-photo.svg';
 
 const useStyles = makeStyles({
   main: {
@@ -10,7 +11,8 @@ const useStyles = makeStyles({
 
   recipeImg: {
     width: '300px',
-    height: '300px'
+    height: '300px',
+    background: `url(${noPhoto}) no-repeat center / 100% 100%`
   },
 
   recipeInfo: {

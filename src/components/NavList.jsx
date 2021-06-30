@@ -12,7 +12,7 @@ const navLink = [
   {title: 'Planner', path: '/planner'}
 ];
 
-const NavList = ({ url, setUrl, open, setOpen, isMenu }) => {
+const NavList = ({ url, open, setOpen, isMenu }) => {
   const classes = useStyles();
   const badges = useSelector(state => state.nav);
 
@@ -46,14 +46,17 @@ const NavList = ({ url, setUrl, open, setOpen, isMenu }) => {
           const badgeContent = setBadgeContent(title);
           return (
             <Fragment key={ title }>
-              <ListItem className={ open ? '' : classes.navItem }>
-                <Link 
-                  component={ url === path ? 'a' : RouterLink }
-                  href={ url === path ? '#' : null }
+              <ListItem 
+                className={ `${open ? '' : classes.navItem} ${path === url ? classes.activeLink : ''}` }
+              >
+                <Link
+                  component={ RouterLink }
                   to={ path }
                   className={ open ? '' : classes.navLink }
                   onClick={(e) => {
-                    path !== url ? setUrl(path) : e.preventDefault();
+                    if (path === url) {
+                      e.preventDefault();
+                    } 
                   }}
                 >
                   <Badge 
@@ -78,7 +81,6 @@ const NavList = ({ url, setUrl, open, setOpen, isMenu }) => {
 
 NavList.propTypes = {
   url: PropTypes.string.isRequired,
-  setUrl: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
   isMenu: PropTypes.bool.isRequired

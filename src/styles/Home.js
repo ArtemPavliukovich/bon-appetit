@@ -8,6 +8,8 @@ const useStyles = makeStyles({
   },
 
   filterBoxes: {padding: '0 12px'},
+
+  searchButton: {marginLeft: '12px'},
   
   filterBox: {
     width: 'auto',
@@ -16,6 +18,9 @@ const useStyles = makeStyles({
       '&:first-child': {
         marginBottom: '12px',
         justifyContent: 'center'
+      },
+      '&:last-child': {
+        flexWrap: 'nowrap'
       }
     },
   }

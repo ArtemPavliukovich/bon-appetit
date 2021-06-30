@@ -14,13 +14,10 @@ const defaultState = {
   isNextQuery: false,
   preloader: 'not-filter',
   popstate: false,
+  scroll: null,
   filter: {
     meal: '',
     diet: ''
-  },
-  scroll: {
-    value: null,
-    isPageLoad: false
   }
 };
 
@@ -37,6 +34,7 @@ const Home = () => {
         recipes: [],
         page: 0,
         preloader: 'filter',
+        scroll: null,
         query: queryValue.current
       }));
     }
@@ -68,10 +66,6 @@ const Home = () => {
             preloader: false,
             isNextQuery: true,
             popstate: false,
-            scroll: {
-              ...prev.scroll,
-              isPageLoad: prev.preloader
-            },
             recipes: [...prev.recipes, ...[data.hits][0].map(el => {
               const recipe = Object.values(el)[0];
               recipe.id = nanoid();
@@ -101,9 +95,9 @@ const Home = () => {
       }
     };
 
-    if (state.scroll.isPageLoad) {
+    if (state.scroll) {
       setScrollPosition(null);
-      window.scrollTo(0, +state.scroll.value);
+      window.scrollTo(0, +state.scroll);
     }
 
     window.addEventListener('scroll', lazyLoadContent, {passive: true});
@@ -117,7 +111,7 @@ const Home = () => {
   return (
     <Container component='main' className={ classes.main }>
       {state.recipes.length || !(state.preloader && state.preloader === 'not-filter')
-        ? <Grid container spacing={ 3 }>
+        ? <Grid container spacing={ 3 } direction={ state.recipes.length ? 'row' : 'column' }>
             <Grid container justify='space-between' className={ classes.filterBoxes }>
               <Grid container className={ classes.filterBox }>
                 <Filter items={ meal } setState={ setState } name={ 'Meal' } value={ state.filter.meal } />
@@ -134,7 +128,7 @@ const Home = () => {
                 <Button
                   size='small'
                   variant='outlined'
-                  style={{marginLeft: '12px'}}
+                  className={ classes.searchButton }
                   onClick={ sendQuery }
                 >
                   { messages.home.searchButton }
@@ -142,11 +136,11 @@ const Home = () => {
               </Grid>
             </Grid>
             {state.preloader === 'filter'
-              ? <Preloader height={ '100%' } />
+              ? <Preloader />
               : <Recipes recipes={ state.recipes } typeButtonCard={ 'add' } />
             }
           </Grid>
-        : <Preloader height={ 'auto' } />
+        : <Preloader />
       }
     </Container>
   );
